@@ -28,7 +28,7 @@ else
   printf '\n'
 fi
 
-unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY npm_config_http_proxy npm_config_https_proxy
+unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY ALL_PROXY all_proxy npm_config_http_proxy npm_config_https_proxy
 
 printf '\n== Installing dependencies (direct, no proxy) ==\n'
 npm install --fetch-retries=0 --fetch-timeout=10000

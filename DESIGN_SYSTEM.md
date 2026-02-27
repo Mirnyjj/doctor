@@ -17,3 +17,7 @@
 - Scroll-driven 3D preview section via Three.js.
 - IntersectionObserver reveal animation for post content.
 - Hover microinteractions (scale + shadow).
+
+## Data source
+- Frontend uses local mock data (`lib/data.ts`) for landing, posts, reviews, and admin panel.
+- Backend integration is intentionally disabled in this revision.
