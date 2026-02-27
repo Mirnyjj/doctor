@@ -54,8 +54,19 @@ h2 { font-size: clamp(1.5rem, 3vw, 2.6rem); }
 .cert-card { background:#fff; border-radius:14px; min-height:120px; display:grid; place-items:center; }
 .sticky-3d { min-height: 210vh; }
 .sticky-inner { position: sticky; top: 20px; background: #fff; border-radius: 20px; padding: 28px; box-shadow: 0 16px 42px rgba(26,32,44,.12); }
-.three-shell { position: relative; text-align: center; }
-.floating-card { width: 260px; height: 360px; border-radius: 16px; margin: -260px auto 10px; background-size: cover; background-position: center; box-shadow: 0 25px 38px rgba(0,0,0,.2); transition: transform .25s linear; }
+.three-shell { position: relative; text-align: center; isolation: isolate; }
+.three-canvas { min-height: 460px; }
+.floating-card {
+  width: 260px;
+  height: 360px;
+  border-radius: 16px;
+  margin: -290px auto 10px;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 25px 38px rgba(0,0,0,.2);
+  transition: transform .25s linear;
+  border: 1px solid rgba(255,255,255,.72);
+}
 .post-card { grid-column: span 6; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 24px rgba(26,32,44,.08); transition: transform .2s ease, box-shadow .2s ease; }
 .post-card:hover { transform: scale(1.01); box-shadow: 0 18px 30px rgba(26,32,44,.14); }
 .post-card img { width: 100%; height: 240px; object-fit: cover; }
@@ -91,5 +102,6 @@ input,textarea { border: 1px solid #d7e2ee; border-radius: 10px; padding: 10px 1
   main { gap: 52px; }
   .container { width: calc(100% - 24px); }
   .sticky-3d { min-height: 140vh; }
-  .floating-card { width: 200px; height: 280px; margin-top: -220px; }
+  .three-canvas { min-height: 390px; }
+  .floating-card { width: 200px; height: 280px; margin-top: -190px; }
 }
