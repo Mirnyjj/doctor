@@ -38,7 +38,7 @@ export default function HomePage() {
 
       <section className="sticky-3d">
         <div className="sticky-inner container">
-          <h2>Нейро 3D preview</h2>
+          <h2>Карусель постов</h2>
           <ThreeScrollPreview posts={posts} />
         </div>
       </section>
