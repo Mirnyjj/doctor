@@ -1,9 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Sparkles, Send, ArrowDown } from "lucide-react";
+import { FaHandHoldingHeart } from "react-icons/fa";
 import Link from "next/link";
-
+import { TbSend } from "react-icons/tb";
+import { GoArrowDown } from "react-icons/go";
 interface HeroClientProps {
   heroTitle: string;
   heroSubtitle: string;
@@ -19,11 +20,11 @@ export function HeroClient({ heroTitle, heroSubtitle }: HeroClientProps) {
         className="mb-8"
       >
         <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 mb-8">
-          <Sparkles className="w-5 h-5 text-pink-400 animate-pulse" />
+          <FaHandHoldingHeart className="w-5 h-5 text-pink-400 animate-pulse" />
           <span className="text-white/90 text-sm tracking-wider uppercase font-medium">
-            Ногтевая студия
+            Врач - невролог
           </span>
-          <Sparkles className="w-5 h-5 text-purple-400 animate-pulse" />
+          <FaHandHoldingHeart className="w-5 h-5 text-purple-400 animate-pulse" />
         </div>
       </motion.div>
 
@@ -72,7 +73,7 @@ export function HeroClient({ heroTitle, heroSubtitle }: HeroClientProps) {
           rel="noopener noreferrer"
           className="group px-8 py-4 bg-white/5 backdrop-blur-xl border-2 border-white/20 text-white rounded-full font-semibold hover:bg-white/10 hover:border-blue-400/50 transition-all duration-300 flex items-center gap-2"
         >
-          <Send className="w-5 h-5 group-hover:text-blue-400 transition-colors" />
+          <TbSend className="w-5 h-5 group-hover:text-blue-400 transition-colors" />
           <span>@prrriveeet</span>
         </a>
       </motion.div>
@@ -84,7 +85,7 @@ export function HeroClient({ heroTitle, heroSubtitle }: HeroClientProps) {
         className="flex flex-col items-center gap-2 mt-12"
       >
         <div className="w-1 h-12 bg-gradient-to-b from-white/30 to-transparent rounded-full animate-pulse"></div>
-        <ArrowDown className="w-8 h-8 text-white/50" />
+        <GoArrowDown className="w-8 h-8 text-white/50" />
       </motion.div>
     </>
   );

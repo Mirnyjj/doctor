@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { motion } from "framer-motion";
-import { Lock, Mail, AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function AdminLoginPage() {
@@ -47,9 +46,7 @@ export default function AdminLoginPage() {
       >
         <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-[0_0_50px_rgba(236,72,153,0.2)]">
           <div className="text-center mb-8">
-            <div className="inline-flex p-4 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl mb-4">
-              <Lock className="w-8 h-8 text-pink-400" />
-            </div>
+            <div className="inline-flex p-4 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl mb-4"></div>
             <h1 className="text-3xl font-black text-white mb-2">
               Админ-панель
             </h1>
@@ -58,7 +55,6 @@ export default function AdminLoginPage() {
 
           {error && (
             <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-xl flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
               <p className="text-red-400 text-sm">{error}</p>
             </div>
           )}
@@ -72,7 +68,6 @@ export default function AdminLoginPage() {
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
                 <input
                   type="email"
                   id="email"
@@ -93,7 +88,6 @@ export default function AdminLoginPage() {
                 Пароль
               </label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
                 <input
                   type="password"
                   id="password"

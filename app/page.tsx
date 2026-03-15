@@ -1,12 +1,11 @@
 import { Hero } from "@/components/Hero";
 import { About } from "@/components/About";
-import { Services } from "@/components/Services";
 import { Portfolio } from "@/components/Portfolio";
 import { ContactForm } from "@/components/ContactForm";
 import { Footer } from "@/components/Footer";
 import { getServices, getSiteSettings, getImages } from "@/lib/db";
 import { StructuredData } from "@/components/StructuredData";
-import { LocationMap } from "@/components/LocationMap";
+// import { LocationMap } from "@/components/LocationMap";
 
 export default async function HomePage() {
   let services: Awaited<ReturnType<typeof getServices>> = [];
@@ -29,10 +28,10 @@ export default async function HomePage() {
       <main className="relative min-h-screen">
         <Hero settings={settings} />
         <About />
-        <Services services={services} />
+        {/* <Services services={services} /> */}
         <Portfolio images={portfolioImages} />
         <ContactForm services={services} />
-        <LocationMap />
+        {/* <LocationMap /> */}
         <Footer />
       </main>
     </>

@@ -3,13 +3,13 @@
 import { useState, useTransition } from "react";
 import { motion } from "framer-motion";
 import {
-  Send,
-  Phone,
-  MessageCircle,
-  AlertCircle,
-  CheckCircle,
-  Calendar,
-} from "lucide-react";
+  TbSend,
+  TbPhone,
+  TbMessageCircle,
+  TbAlertCircle,
+  TbCalendar,
+} from "react-icons/tb";
+import { FiCheckCircle } from "react-icons/fi";
 import type { Service } from "@/lib/types";
 import { sendAppointmentMessage } from "@/telegram";
 
@@ -50,7 +50,7 @@ export function ContactForm({ services }: ContactFormProps) {
         setTimeout(() => {
           setResult(null);
           const form = document.getElementById(
-            "contact-form",
+            "contact-form"
           ) as HTMLFormElement;
           if (form) form.reset();
         }, 3000);
@@ -134,7 +134,7 @@ export function ContactForm({ services }: ContactFormProps) {
                 className="group flex items-center gap-4 bg-gradient-to-br from-orange-500/20 to-pink-600/10 backdrop-blur-xl rounded-2xl p-6 border border-orange-500/30 hover:border-orange-400/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(249,115,22,0.3)]"
               >
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-500 to-pink-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <Calendar className="w-7 h-7 text-white" />
+                  <TbCalendar className="w-7 h-7 text-white" />
                 </div>
                 <div>
                   <h4 className="font-bold text-white text-lg mb-1">
@@ -152,7 +152,7 @@ export function ContactForm({ services }: ContactFormProps) {
                 className="group flex items-center gap-4 bg-gradient-to-br from-cyan-500/20 to-blue-500/10 backdrop-blur-xl rounded-2xl p-6 border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(6,182,212,0.3)]"
               >
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <MessageCircle className="w-7 h-7 text-white" />
+                  <TbMessageCircle className="w-7 h-7 text-white" />
                 </div>
                 <div>
                   <h4 className="font-bold text-white text-lg mb-1">
@@ -166,7 +166,7 @@ export function ContactForm({ services }: ContactFormProps) {
                 className="group flex items-center gap-4 bg-gradient-to-br from-purple-500/20 to-purple-600/10 backdrop-blur-xl rounded-2xl p-6 border border-purple-500/30 hover:border-purple-400/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(168,85,247,0.3)]"
               >
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <Phone className="w-7 h-7 text-white" />
+                  <TbPhone className="w-7 h-7 text-white" />
                 </div>
                 <div>
                   <h4 className="font-bold text-white text-lg mb-1">Телефон</h4>
@@ -202,7 +202,7 @@ export function ContactForm({ services }: ContactFormProps) {
                     }}
                     className="w-28 h-28 rounded-3xl bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 flex items-center justify-center shadow-2xl mb-8 border-4 border-white/20 hover:shadow-[0_0_40px_rgba(34,197,94,0.4)] transition-all duration-300 hover:scale-105"
                   >
-                    <CheckCircle className="w-16 h-16 text-white drop-shadow-lg" />
+                    <FiCheckCircle className="w-16 h-16 text-white drop-shadow-lg" />
                   </motion.div>
 
                   <motion.h3
@@ -247,7 +247,7 @@ export function ContactForm({ services }: ContactFormProps) {
                 >
                   {result && !result.success && (
                     <div className="p-4 bg-red-500/20 border border-red-500/50 rounded-xl flex items-start gap-3">
-                      <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                      <TbAlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
                       <p className="text-red-400 text-sm font-medium">
                         {result.message}
                       </p>
@@ -377,7 +377,7 @@ export function ContactForm({ services }: ContactFormProps) {
                     disabled={isPending || !consentAgreed}
                     className="w-full px-8 py-5 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white text-lg rounded-xl font-bold hover:shadow-[0_0_40px_rgba(236,72,153,0.6)] transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-500/30"
                   >
-                    <Send className="w-6 h-6" />
+                    <TbSend className="w-6 h-6" />
                     {isPending ? "Отправка..." : "Отправить заявку"}
                   </button>
                 </form>

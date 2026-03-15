@@ -1,4 +1,6 @@
-import { Heart, MessageCircle, Phone, Sparkles } from "lucide-react";
+import { FaHeartbeat } from "react-icons/fa";
+import { GiLovers } from "react-icons/gi";
+import { TbPhone, TbMessageCircle } from "react-icons/tb";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -12,16 +14,15 @@ export function Footer() {
           <div>
             <h3 className="text-3xl font-black mb-4">
               <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 bg-clip-text text-transparent">
-                AVDEEVA
+                Врач - невролог
               </span>
             </h3>
             <p className="text-white/70 leading-relaxed mb-4">
-              Ногтевая студия Анастасии Авдеевой в Самаре. Создаю уникальные
-              дизайны и забочусь о здоровье ваших ногтей.
+              Ваше здоровье в надежных руках и добром сердце
             </p>
             <div className="flex items-center gap-2 text-white/60">
-              <Sparkles className="w-4 h-4 text-pink-400" />
-              <span className="text-sm">С любовью к маникюру с 2018 года</span>
+              <GiLovers className="w-4 h-4 text-pink-400" />
+              <span className="text-sm">С любовью к пациентам</span>
             </div>
           </div>
 
@@ -67,7 +68,7 @@ export function Footer() {
                   className="flex items-center gap-3 text-white/70 hover:text-pink-400 transition-colors group"
                 >
                   <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-pink-500/20 transition-colors">
-                    <Phone className="w-5 h-5" />
+                    <TbPhone className="w-5 h-5" />
                   </div>
                   <div>
                     <div className="text-xs text-white/50">Телефон</div>
@@ -84,7 +85,7 @@ export function Footer() {
                   className="flex items-center gap-3 text-white/70 hover:text-cyan-400 transition-colors group"
                 >
                   <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center group-hover:from-cyan-500/40 group-hover:to-blue-500/40 transition-all">
-                    <MessageCircle className="w-5 h-5" />
+                    <TbMessageCircle className="w-5 h-5" />
                   </div>
                   <div>
                     <div className="text-xs text-white/50">Telegram</div>
@@ -98,11 +99,11 @@ export function Footer() {
 
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-white/50 text-sm text-center md:text-left">
-            © {currentYear} Анастасия Авдеева. Все права защищены.
+            © {currentYear} Понятова А.А. Все права защищены.
           </p>
           <div className="flex items-center gap-2 text-white/50 text-sm">
             <span>Создано с</span>
-            <Heart className="w-4 h-4 text-pink-500 fill-pink-500 animate-pulse" />
+            <FaHeartbeat className="w-4 h-4 text-pink-500 fill-pink-500 animate-pulse" />
             <span>и вниманием к деталям</span>
           </div>
         </div>

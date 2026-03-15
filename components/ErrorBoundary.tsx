@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Component, ReactNode } from 'react';
-import { AlertCircle } from 'lucide-react';
+import { Component, ReactNode } from "react";
+import { IoAlertCircleOutline } from "react-icons/io5";
 
 interface Props {
   children: ReactNode;
@@ -24,7 +24,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: unknown) {
-    console.error('Error caught by boundary:', error, errorInfo);
+    console.error("Error caught by boundary:", error, errorInfo);
   }
 
   render() {
@@ -36,10 +36,12 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="min-h-screen flex items-center justify-center bg-black px-4">
           <div className="text-center">
-            <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-white mb-2">Что-то пошло не так</h1>
+            <IoAlertCircleOutline className="w-16 h-16 text-red-400 mx-auto mb-4" />
+            <h1 className="text-2xl font-bold text-white mb-2">
+              Что-то пошло не так
+            </h1>
             <p className="text-white/70 mb-6">
-              {this.state.error?.message || 'Произошла непредвиденная ошибка'}
+              {this.state.error?.message || "Произошла непредвиденная ошибка"}
             </p>
             <button
               onClick={() => {

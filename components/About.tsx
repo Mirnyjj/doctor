@@ -1,13 +1,20 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Award, Heart, Sparkles, Users } from "lucide-react";
+import { FaAward } from "react-icons/fa6";
+import { FaHeartbeat } from "react-icons/fa";
+import { FaUserDoctor } from "react-icons/fa6";
+import { GiLovers } from "react-icons/gi";
 
 const stats = [
-  { icon: Users, value: "500+", label: "Довольных клиентов" },
-  { icon: Award, value: "8 лет", label: "Опыта работы" },
-  { icon: Sparkles, value: "1000+", label: "Работ выполнено" },
-  { icon: Heart, value: "100%", label: "Любви к делу" },
+  { icon: GiLovers, value: "100+", label: "Довольных клиентов" },
+  { icon: FaAward, value: "3 года", label: "Опыта работы" },
+  {
+    icon: FaUserDoctor,
+    value: "10+",
+    label: "Пройдено дополнительного обучения",
+  },
+  { icon: FaHeartbeat, value: "100%", label: "Любви к делу" },
 ];
 
 export function About() {

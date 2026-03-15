@@ -3,13 +3,13 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { ImageWithFallback } from "./ImageWithFallback";
 import {
-  ChevronLeft,
-  ChevronRight,
-  Crown,
-  Send,
-  Sparkles,
-  X,
-} from "lucide-react";
+  LuChevronLeft,
+  LuChevronRight,
+  LuCrown,
+  LuSend,
+  LuSparkles,
+  LuX,
+} from "react-icons/lu";
 import type { Image } from "@/lib/types";
 import { useState } from "react";
 import { useSwipeable } from "react-swipeable";
@@ -55,13 +55,13 @@ export function Portfolio({ images }: PortfolioProps) {
 
   const goToPrevious = () => {
     setCurrentIndex((prev) =>
-      prev === 0 ? portfolioImages.length - 1 : prev - 1,
+      prev === 0 ? portfolioImages.length - 1 : prev - 1
     );
   };
 
   const goToNext = () => {
     setCurrentIndex((prev) =>
-      prev === portfolioImages.length - 1 ? 0 : prev + 1,
+      prev === portfolioImages.length - 1 ? 0 : prev + 1
     );
   };
 
@@ -114,7 +114,7 @@ export function Portfolio({ images }: PortfolioProps) {
           className="text-center mb-20 lg:mb-28"
         >
           <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 mb-6 mx-auto max-w-max">
-            <Sparkles className="w-5 h-5 text-pink-400" />
+            <LuSparkles className="w-5 h-5 text-pink-400" />
             <span className="text-white/90 text-sm tracking-wider uppercase font-medium">
               Галерея работ
             </span>
@@ -155,7 +155,7 @@ export function Portfolio({ images }: PortfolioProps) {
 
               <div className="absolute top-8 right-8 z-20 bg-gradient-to-r from-white/95 to-slate-100/95 backdrop-blur-2xl border border-white/50 rounded-2xl px-5 py-3 shadow-2xl hover:shadow-pink-500/30 transition-all duration-300 hover:scale-105">
                 <span className="text-xs lg:text-sm font-bold text-slate-900 uppercase tracking-widest flex items-center gap-2">
-                  <Crown className="w-4 h-4 lg:w-5 lg:h-5 text-pink-500 fill-current" />
+                  <LuCrown className="w-4 h-4 lg:w-5 lg:h-5 text-pink-500 fill-current" />
                   {currentImage?.sectionRu}
                 </span>
               </div>
@@ -178,7 +178,7 @@ export function Portfolio({ images }: PortfolioProps) {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
-              <ChevronLeft className="w-6 h-6 lg:w-7 lg:h-7" />
+              <LuChevronLeft className="w-6 h-6 lg:w-7 lg:h-7" />
             </motion.button>
           </div>
 
@@ -189,7 +189,7 @@ export function Portfolio({ images }: PortfolioProps) {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
-              <ChevronRight className="w-6 h-6 lg:w-7 lg:h-7" />
+              <LuChevronRight className="w-6 h-6 lg:w-7 lg:h-7" />
             </motion.button>
           </div>
 
@@ -202,8 +202,8 @@ export function Portfolio({ images }: PortfolioProps) {
                   index === currentIndex
                     ? "bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 shadow-[0_0_15px_rgba(236,72,153,0.4)] scale-110 border border-white/50 w-10 h-10 sm:w-12 sm:h-12"
                     : popularIndices.includes(index)
-                      ? "bg-gradient-to-r from-pink-400/60 to-orange-400/60 border border-pink-500/50 hover:shadow-pink-500/30 w-8 h-8 sm:w-10 sm:h-10"
-                      : "bg-white/30 border border-white/40 hover:bg-white/50 hover:shadow-white/20 w-7 h-7 sm:w-9 sm:h-9"
+                    ? "bg-gradient-to-r from-pink-400/60 to-orange-400/60 border border-pink-500/50 hover:shadow-pink-500/30 w-8 h-8 sm:w-10 sm:h-10"
+                    : "bg-white/30 border border-white/40 hover:bg-white/50 hover:shadow-white/20 w-7 h-7 sm:w-9 sm:h-9"
                 }`}
                 whileHover={{ scale: 1.2 }}
                 whileTap={{ scale: 0.85 }}
@@ -234,7 +234,7 @@ export function Portfolio({ images }: PortfolioProps) {
                   setSelectedImage(null);
                 }}
               >
-                <X className="w-7 h-7" />
+                <LuX className="w-7 h-7" />
               </motion.button>
 
               <motion.div
@@ -256,7 +256,7 @@ export function Portfolio({ images }: PortfolioProps) {
 
                   <div className="absolute top-4 right-4 z-10 bg-gradient-to-r from-white/95 to-white/80 backdrop-blur-xl border border-white/60 rounded-xl px-4 py-2 shadow-2xl">
                     <span className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                      <Crown className="w-3.5 h-3.5 text-pink-500 fill-current" />
+                      <LuCrown className="w-3.5 h-3.5 text-pink-500 fill-current" />
                       {getSectionRu(selectedImage.section)}
                     </span>
                   </div>
@@ -281,7 +281,7 @@ export function Portfolio({ images }: PortfolioProps) {
         >
           <div className="inline-block bg-gradient-to-br from-white/5 via-white/2 to-black/50 backdrop-blur-3xl rounded-3xl p-12 lg:p-16 border border-white/10 shadow-2xl hover:shadow-[0_0_50px_rgba(236,72,153,0.3)] transition-all duration-500 hover:scale-105">
             <div className="w-20 h-20 lg:w-24 lg:h-24 mx-auto mb-8 bg-gradient-to-br from-blue-500/20 via-cyan-500/20 to-emerald-500/20 rounded-3xl flex items-center justify-center border-2 border-blue-500/40 backdrop-blur-xl shadow-xl">
-              <Send className="w-10 h-10 lg:w-12 lg:h-12 text-blue-400 drop-shadow-lg" />
+              <LuSend className="w-10 h-10 lg:w-12 lg:h-12 text-blue-400 drop-shadow-lg" />
             </div>
             <h3 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white mb-6 bg-gradient-to-r from-white via-pink-200 to-orange-200 bg-clip-text text-transparent drop-shadow-2xl">
               Больше работ в Telegram
@@ -295,7 +295,7 @@ export function Portfolio({ images }: PortfolioProps) {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-4 px-12 lg:px-16 py-6 lg:py-8 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 hover:from-purple-400 hover:via-pink-400 hover:to-orange-400 text-white rounded-3xl font-bold text-xl lg:text-2xl shadow-2xl hover:shadow-[0_0_60px_rgba(236,72,153,0.8)] transition-all duration-500 hover:scale-110 hover:-translate-y-2 border border-purple-500/50 hover:border-pink-400/70"
             >
-              <Send className="w-6 h-6 lg:w-7 lg:h-7" />
+              <LuSend className="w-6 h-6 lg:w-7 lg:h-7" />
               <span>Открыть канал</span>
             </a>
           </div>
