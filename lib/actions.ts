@@ -240,17 +240,23 @@ export async function getPostSections(post_id: string) {
 export async function getPostBySlug(slug: string) {
   const supabase = await createServerSupabaseClient();
 
-  const { data: post, error: postError } = await supabase
+  const { data, error } = await supabase
     .from("posts")
-    .select("*")
+    .select(
+      `
+      *,
+      sections:post_sections(*)
+    `,
+    )
     .eq("slug", slug)
     .single();
 
-  if (postError) {
-    return null;
-  }
+  if (error) return null;
 
   return {
-    post,
+    post: {
+      ...data,
+      sections: data.sections ?? [],
+    },
   };
 }
