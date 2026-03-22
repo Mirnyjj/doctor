@@ -5,25 +5,28 @@ import { motion } from "framer-motion";
 import {
   TbSend,
   TbPhone,
-  TbMessageCircle,
   TbAlertCircle,
-  TbCalendar,
+  TbMail,
+  TbClock,
+  TbVideo,
 } from "react-icons/tb";
 import { FiCheckCircle } from "react-icons/fi";
-import type { Service } from "@/lib/types";
+import type { DoctorWithRelations, Problem } from "@/lib/types";
 import { sendAppointmentMessage } from "@/telegram";
 
 interface ContactFormProps {
-  services: Service[];
+  problem: Problem[];
+  doctor: DoctorWithRelations
 }
 
-export function ContactForm({ services }: ContactFormProps) {
+export function ContactForm({ problem, doctor }: ContactFormProps) {
   const [result, setResult] = useState<{
     success: boolean;
     message: string;
   } | null>(null);
   const [isPending, startTransition] = useTransition();
   const [consentAgreed, setConsentAgreed] = useState(false);
+  const email = doctor.contacts?.filter(item => item.type === 'email')
 
   const handleSubmit = async (formData: FormData) => {
     startTransition(async () => {
@@ -36,7 +39,8 @@ export function ContactForm({ services }: ContactFormProps) {
           service: formData.get("service") as string,
           date: formData.get("date") as string,
           message: formData.get("message") as string,
-          source: "Форма записи",
+          online: formData.get("onlineConsultation") as string,
+          source: "Форма записи на приём",
         };
 
         await sendAppointmentMessage(data);
@@ -44,7 +48,7 @@ export function ContactForm({ services }: ContactFormProps) {
         setResult({
           success: true,
           message:
-            "Заявка отправлена! Скоро свяжусь с Вами для подтверждения записи.",
+            "Заявка отправлена! Я свяжусь с вами в ближайшее время для подтверждения записи.",
         });
 
         setTimeout(() => {
@@ -53,26 +57,47 @@ export function ContactForm({ services }: ContactFormProps) {
             "contact-form"
           ) as HTMLFormElement;
           if (form) form.reset();
-        }, 3000);
+          setConsentAgreed(false);
+        }, 5000);
       } catch (error) {
         setResult({
           success: false,
           message:
-            "Ошибка отправки. Попробуйте еще раз или свяжитесь напрямую.",
+            "Произошла ошибка. Пожалуйста, попробуйте ещё раз или позвоните мне.",
         });
-        console.error("Telegram error:", error);
+        console.error("Ошибка отправки:", error);
       }
     });
   };
 
-  return (
-    <section
-      id="contact"
-      className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden backdrop-blur-sm"
-    >
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm z-0" />
+  const daysOfWeek = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+  const fullDaysOfWeek = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
 
-      <div className="relative z-10 max-w-7xl mx-auto">
+  // Форматируем время
+  const formatTime = (time: string | null) => {
+    if (!time) return 'Выходной';
+    return time.slice(0, 5); // "09:00:00" -> "09:00"
+  };
+
+  // Группируем по дням с одинаковым расписанием для компактного отображения
+  const compactSchedule = doctor.schedule?.reduce((acc, day) => {
+    const lastGroup = acc[acc.length - 1];
+
+    if (lastGroup && lastGroup.start === day.start_time && lastGroup.end === day.end_time) {
+      lastGroup.days.push(day.day_of_week);
+    } else {
+      acc.push({
+        days: [day.day_of_week],
+        start: day.start_time,
+        end: day.end_time
+      });
+    }
+    return acc;
+  }, [] as { days: number[]; start: string | null; end: string | null }[]);
+
+  return (
+    <section id="contact" className="py-20 bg-gradient-to-b from-white to-slate-50">
+      <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -80,17 +105,16 @@ export function ContactForm({ services }: ContactFormProps) {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-5xl md:text-7xl font-black mb-6">
-            <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 bg-clip-text text-transparent">
-              ЗАПИСЬ
-            </span>
+          <h2 className="text-3xl md:text-4xl font-light text-slate-800 mb-4">
+            Запись на приём
           </h2>
-          <p className="text-xl text-white/70 max-w-2xl mx-auto">
-            Свяжитесь со мной удобным способом или заполните форму онлайн-записи
+          <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+            Выберите удобный способ связи или заполните форму, и я свяжусь с вами для уточнения деталей
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+          {/* Левая колонка - контакты */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -98,168 +122,145 @@ export function ContactForm({ services }: ContactFormProps) {
             viewport={{ once: true }}
             className="space-y-8"
           >
-            <div className="space-y-4">
-              <h3 className="text-2xl font-bold text-white mb-6">
-                Быстрая связь
+            <div>
+              <h3 className="text-xl font-medium text-slate-700 mb-6">
+                Контактная информация
               </h3>
 
-              <a
-                href="https://vk.com/avdeeevanails"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-4 bg-gradient-to-br from-blue-500/20 to-blue-600/10 backdrop-blur-xl rounded-2xl p-6 border border-blue-500/30 hover:border-blue-400/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(59,130,246,0.3)]"
-              >
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <svg
-                    className="w-7 h-7 text-white"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
+              <div className="space-y-4">
+                {/* Телефон */}
+                <a
+                  href={`tel:${doctor.phone}`}
+                  className="flex items-center gap-4 p-5 bg-white rounded-xl border border-slate-100 hover:border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 group"
+                >
+                  <div className="w-12 h-12 bg-sky-50 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <TbPhone className="w-6 h-6 text-sky-600" />
+                  </div>
+                  <div>
+                    <div className="text-sm text-slate-400 mb-1">Телефон</div>
+                    <div className="text-lg font-medium text-slate-800">{doctor.phone}</div>
+                  </div>
+                </a>
+
+                {email && email[0] && (
+                  <a
+                    href={`mailto:${email[0].value}`}
+                    className="flex items-center gap-4 p-5 bg-white rounded-xl border border-slate-100 hover:border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 group"
                   >
-                    <path d="M15.07 2H8.93C3.33 2 2 3.33 2 8.93v6.14C2 20.67 3.33 22 8.93 22h6.14c5.6 0 6.93-1.33 6.93-6.93V8.93C22 3.33 20.67 2 15.07 2zm3.15 14.41c-.13.37-.58.64-1.07.64-.19 0-.38-.03-.58-.1-.76-.26-1.58-1.08-2.26-1.79-.5-.52-.93-.96-1.27-.96-.17 0-.38.08-.64.48-.31.48-.47 1.01-.47 1.01s-.04.37-.44.37h-.96c-.44 0-2.71-.17-4.65-2.18-2.18-2.25-4.11-6.74-4.11-6.74s-.1-.25.01-.38c.12-.14.45-.15.45-.15h2.03c.38 0 .52.17.62.35 0 0 .59 1.45 1.35 2.76.99 1.71 1.43 2.08 1.76 2.08.23 0 .42-.1.42-.68v-2.68c-.06-1.17-.69-1.27-.69-1.68 0-.16.13-.31.33-.31h3.18c.32 0 .43.17.43.32v3.63c0 .32.14.43.23.43.23 0 .41-.14.82-.56 1.26-1.42 2.16-3.61 2.16-3.61s.12-.24.31-.35c.19-.11.45-.07.45-.07h2.13c.64 0 .78.32.64.76-.3 1.03-2.64 4.38-2.64 4.38-.19.32-.23.46 0 .77.17.24.74.73 1.12 1.18.69.81 1.22 1.49 1.36 1.96z" />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="font-bold text-white text-lg mb-1">
-                    ВКонтакте
-                  </h4>
-                  <p className="text-blue-300 text-sm">
-                    Быстрая запись и консультация
-                  </p>
-                </div>
-              </a>
-              <a
-                href="https://dikidi.net/1772013?p=0.pi"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-4 bg-gradient-to-br from-orange-500/20 to-pink-600/10 backdrop-blur-xl rounded-2xl p-6 border border-orange-500/30 hover:border-orange-400/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(249,115,22,0.3)]"
-              >
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-500 to-pink-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <TbCalendar className="w-7 h-7 text-white" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-white text-lg mb-1">
-                    Онлайн-запись
-                  </h4>
-                  <p className="text-orange-300 text-sm">
-                    Записаться через DIKIDI
-                  </p>
-                </div>
-              </a>
-              <a
-                href="https://t.me/avdeevanailssmr"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-4 bg-gradient-to-br from-cyan-500/20 to-blue-500/10 backdrop-blur-xl rounded-2xl p-6 border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(6,182,212,0.3)]"
-              >
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <TbMessageCircle className="w-7 h-7 text-white" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-white text-lg mb-1">
-                    Telegram
-                  </h4>
-                  <p className="text-cyan-300 text-sm">Мой канал</p>
-                </div>
-              </a>
-              <a
-                href="tel:+79276136513"
-                className="group flex items-center gap-4 bg-gradient-to-br from-purple-500/20 to-purple-600/10 backdrop-blur-xl rounded-2xl p-6 border border-purple-500/30 hover:border-purple-400/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(168,85,247,0.3)]"
-              >
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <TbPhone className="w-7 h-7 text-white" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-white text-lg mb-1">Телефон</h4>
-                  <p className="text-purple-300 text-sm">+79276136513</p>
-                </div>
-              </a>
+                    <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform">
+                      <TbMail className="w-6 h-6 text-emerald-600" />
+                    </div>
+                    <div>
+                      <div className="text-sm text-slate-400 mb-1">Email</div>
+                      <div className="text-lg font-medium text-slate-800">{email[0].value}</div>
+                    </div>
+                  </a>
+                )}
+
+                {/* Время работы */}
+                {doctor.schedule && doctor.schedule.length > 0 && (
+                  <div className="flex items-start gap-4 p-5 bg-white rounded-xl border border-slate-100">
+                    <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <TbClock className="w-6 h-6 text-amber-600" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-sm text-slate-400 mb-2">Время работы</div>
+
+                      {/* Компактное отображение */}
+                      <div className="space-y-1">
+                        {compactSchedule && compactSchedule.map((group, idx) => {
+                          const dayRange = group.days.length > 1
+                            ? `${daysOfWeek[group.days[0]]}-${daysOfWeek[group.days[group.days.length - 1]]}`
+                            : daysOfWeek[group.days[0]];
+
+                          return (
+                            <div key={idx} className="flex justify-between text-sm">
+                              <span className="text-slate-500">{dayRange}</span>
+                              <span className="text-slate-700 font-medium">
+                                {`${formatTime(group.start)} – ${formatTime(group.end)}`}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Детальное отображение (можно добавить по клику) */}
+                      <details className="mt-2">
+                        <summary className="text-xs text-slate-400 cursor-pointer hover:text-slate-600">
+                          Подробное расписание
+                        </summary>
+                        <div className="mt-2 space-y-1">
+                          {doctor.schedule
+                            .sort((a, b) => a.day_of_week - b.day_of_week)
+                            .map((day) => (
+                              <div key={day.id} className="flex justify-between text-xs">
+                                <span className="text-slate-400">{fullDaysOfWeek[day.day_of_week]}</span>
+                                <span className="text-slate-600">
+                                  {`${formatTime(day.start_time)} – ${formatTime(day.end_time)}`}
+                                </span>
+                              </div>
+                            ))}
+                        </div>
+                      </details>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Дополнительная информация */}
+            <div className="bg-slate-50 rounded-xl p-6 border border-slate-100">
+              <h4 className="font-medium text-slate-800 mb-3">Обратите внимание</h4>
+              <p className="text-sm text-slate-500 leading-relaxed">
+                При первичном приёме просьба иметь при себе результаты предыдущих обследований (если есть).
+                Это поможет более точно оценить ситуацию и сократить время диагностики.
+              </p>
             </div>
           </motion.div>
 
+          {/* Правая колонка - форма */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-[0_0_50px_rgba(236,72,153,0.2)]">
+            <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
               {result?.success ? (
-                <div className="flex flex-col items-center justify-center py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 text-center w-full mx-auto">
-                  <motion.div
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                    className="absolute inset-0 bg-gradient-to-br from-green-500/20 via-emerald-500/10 to-teal-500/20 rounded-3xl blur-xl -z-10"
-                  />
+                <div className="flex flex-col items-center text-center py-12">
+                  <div className="w-20 h-20 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6">
+                    <FiCheckCircle className="w-10 h-10 text-emerald-500" />
+                  </div>
 
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{
-                      duration: 0.5,
-                      type: "spring",
-                      stiffness: 400,
-                    }}
-                    className="w-28 h-28 rounded-3xl bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 flex items-center justify-center shadow-2xl mb-8 border-4 border-white/20 hover:shadow-[0_0_40px_rgba(34,197,94,0.4)] transition-all duration-300 hover:scale-105"
-                  >
-                    <FiCheckCircle className="w-16 h-16 text-white drop-shadow-lg" />
-                  </motion.div>
+                  <h3 className="text-2xl font-light text-slate-800 mb-3">
+                    Заявка отправлена
+                  </h3>
 
-                  <motion.h3
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.3 }}
-                    className="text-4xl md:text-5xl font-black mb-6 leading-tight bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 bg-clip-text text-transparent drop-shadow-2xl"
-                  >
-                    Заявка отправлена!
-                  </motion.h3>
-
-                  <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
-                    className="text-xl md:text-2xl text-white/90 mb-8 max-w-sm leading-relaxed font-medium tracking-wide"
-                  >
+                  <p className="text-slate-500 mb-6 max-w-sm">
                     {result.message}
-                  </motion.p>
+                  </p>
 
-                  <motion.div
-                    initial={{ scaleX: 0, opacity: 0 }}
-                    animate={{ scaleX: 1, opacity: 1 }}
-                    transition={{ duration: 0.8, delay: 0.5 }}
-                    className="w-24 h-1 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full mb-8 shadow-lg"
-                  />
-
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 0.6 }}
-                    className="text-green-400 text-lg font-bold tracking-wider"
-                  >
-                    Автозакрытие через 3...2...1...
-                  </motion.div>
+                  <div className="w-16 h-1 bg-emerald-100 rounded-full" />
                 </div>
               ) : (
                 <form
                   id="contact-form"
                   action={handleSubmit}
-                  className="space-y-6"
+                  className="space-y-5"
                 >
                   {result && !result.success && (
-                    <div className="p-4 bg-red-500/20 border border-red-500/50 rounded-xl flex items-start gap-3">
-                      <TbAlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-                      <p className="text-red-400 text-sm font-medium">
+                    <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-3">
+                      <TbAlertCircle className="w-5 h-5 text-rose-500 flex-shrink-0 mt-0.5" />
+                      <p className="text-rose-600 text-sm">
                         {result.message}
                       </p>
                     </div>
                   )}
 
+                  {/* Имя */}
                   <div>
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-bold text-white mb-2"
-                    >
-                      Ваше имя *
+                    <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1.5">
+                      Ваше имя <span className="text-rose-400">*</span>
                     </label>
                     <input
                       type="text"
@@ -267,17 +268,15 @@ export function ContactForm({ services }: ContactFormProps) {
                       name="name"
                       required
                       disabled={isPending}
-                      className="w-full px-5 py-4 rounded-xl bg-white/5 border border-white/20 text-white placeholder-white/40 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all outline-none backdrop-blur-xl disabled:opacity-50"
-                      placeholder="Анастасия"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all disabled:opacity-50"
+                      placeholder="Например, Анна"
                     />
                   </div>
 
+                  {/* Телефон */}
                   <div>
-                    <label
-                      htmlFor="phone"
-                      className="block text-sm font-bold text-white mb-2"
-                    >
-                      Телефон *
+                    <label htmlFor="phone" className="block text-sm font-medium text-slate-700 mb-1.5">
+                      Телефон <span className="text-rose-400">*</span>
                     </label>
                     <input
                       type="tel"
@@ -285,101 +284,117 @@ export function ContactForm({ services }: ContactFormProps) {
                       name="phone"
                       required
                       disabled={isPending}
-                      className="w-full px-5 py-4 rounded-xl bg-white/5 border border-white/20 text-white placeholder-white/40 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all outline-none backdrop-blur-xl disabled:opacity-50"
-                      placeholder="+79276136513"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all disabled:opacity-50"
+                      placeholder="+7 (927) 613-65-13"
                     />
                   </div>
 
+                  {/* Услуга */}
                   <div>
-                    <label
-                      htmlFor="service"
-                      className="block text-sm font-bold text-white mb-2"
-                    >
-                      Выберите услугу
+                    <label htmlFor="service" className="block text-sm font-medium text-slate-700 mb-1.5">
+                      Интересует направление
                     </label>
                     <select
                       id="service"
                       name="service"
                       disabled={isPending}
-                      className="w-full px-5 py-4 rounded-xl bg-white/5 border border-white/20 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all outline-none backdrop-blur-xl disabled:opacity-50"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all disabled:opacity-50"
                     >
-                      <option value="">Выберите услугу</option>
-                      {services.map((service) => (
-                        <option key={service.id} value={service.title}>
-                          {service.title}
+                      <option value="">Выберите направление</option>
+                      {problem.map((problem) => (
+                        <option key={problem.id} value={problem.title}>
+                          {problem.title}
                         </option>
                       ))}
                     </select>
                   </div>
 
+                  {/* Дата */}
                   <div>
-                    <label
-                      htmlFor="date"
-                      className="block text-base font-bold text-white mb-2"
-                    >
-                      Желаемая дата
+                    <label htmlFor="date" className="block text-sm font-medium text-slate-700 mb-1.5">
+                      Предпочтительная дата
                     </label>
                     <input
                       type="date"
                       id="date"
                       name="date"
                       disabled={isPending}
-                      className="w-full max-w-full block px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-base text-white placeholder-white/40 font-normal focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all outline-none backdrop-blur-sm disabled:opacity-50 appearance-none box-border [&::-webkit-calendar-picker-indicator]:w-6 [&::-webkit-calendar-picker-indicator]:h-6 [&::-webkit-calendar-picker-indicator]:mx-1 [&::-webkit-calendar-picker-indicator]:p-0 [&::-webkit-calendar-picker-indicator]:rounded-full [&::-webkit-calendar-picker-indicator]:bg-gradient-to-r from-purple-500 to-pink-500 [&::-webkit-calendar-picker-indicator]:border [&::-webkit-calendar-picker-indicator]:border-white/30 [&::-webkit-clear-button\\]:-webkit-appearance-none [&::-webkit-clear-button\\]:display-none"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all disabled:opacity-50 [&::-webkit-calendar-picker-indicator]:opacity-50 [&::-webkit-calendar-picker-indicator]:hover:opacity-100"
                     />
                   </div>
+                  <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl">
+                    <input
+                      type="checkbox"
+                      id="onlineConsultation"
+                      name="onlineConsultation"
+                      disabled={isPending}
 
+                      className="w-4 h-4 mt-1 text-blue-600 bg-white border-slate-300 rounded focus:ring-blue-200"
+                    />
+                    <label htmlFor="online" className="flex items-start gap-2 text-sm text-slate-600 leading-relaxed cursor-pointer">
+                      <TbVideo className="w-5 h-5 text-blue-500 flex-shrink-0" />
+                      <span>
+                        <span className="font-medium">Онлайн консультация</span>
+                        <span className="text-slate-400 text-xs block mt-0.5">
+                          Видеосвязь через Яндекс Телемост, или Zoom
+                        </span>
+                      </span>
+                    </label>
+                  </div>
+
+                  {/* Комментарий */}
                   <div>
-                    <label
-                      htmlFor="message"
-                      className="block text-sm font-bold text-white mb-2"
-                    >
-                      Комментарий
+                    <label htmlFor="message" className="block text-sm font-medium text-slate-700 mb-1.5">
+                      Дополнительная информация
                     </label>
                     <textarea
                       id="message"
                       name="message"
                       rows={4}
                       disabled={isPending}
-                      className="w-full px-5 py-4 rounded-xl bg-white/5 border border-white/20 text-white placeholder-white/40 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all outline-none resize-none backdrop-blur-xl disabled:opacity-50"
-                      placeholder="Напишите пожелания по дизайну или задайте вопрос..."
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all resize-none disabled:opacity-50"
+                      placeholder="Опишите кратко ваш вопрос или пожелания..."
                     />
                   </div>
 
-                  <div className="flex items-start gap-3 p-4 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10">
-                    <label className="flex items-start gap-3 cursor-pointer w-full group">
-                      <input
-                        type="checkbox"
-                        id="consent"
-                        name="consent"
-                        checked={consentAgreed}
-                        onChange={(e) => setConsentAgreed(e.target.checked)}
-                        disabled={isPending}
-                        className="w-5 h-5 mt-0.5 text-pink-500 bg-white/10 border-2 border-white/30 rounded focus:ring-pink-500 focus:ring-2 focus:border-transparent transition-all duration-200 accent-pink-500 group-hover:border-pink-400/50 disabled:opacity-50"
-                        required
-                      />
-                      <span className="text-sm text-white/80 leading-relaxed group-hover:text-white transition-colors">
-                        Согласен(-на) на обработку персональных данных и
-                        политику конфиденциальности. <br />
-                        <a
-                          href="/privacy"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-pink-400 hover:text-pink-300 underline decoration-pink-400/50 font-medium transition-all duration-200"
-                        >
-                          Ознакомиться →
-                        </a>
-                      </span>
+                  {/* Согласие */}
+                  <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl">
+                    <input
+                      type="checkbox"
+                      id="consent"
+                      name="consent"
+                      checked={consentAgreed}
+                      onChange={(e) => setConsentAgreed(e.target.checked)}
+                      disabled={isPending}
+                      className="w-4 h-4 mt-1 text-blue-600 bg-white border-slate-300 rounded focus:ring-blue-200"
+                      required
+                    />
+                    <label htmlFor="consent" className="text-sm text-slate-500 leading-relaxed">
+                      Я согласен(на) на{' '}
+                      <a
+                        href="/privacy"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-700 underline underline-offset-2 transition-colors"
+                      >
+                        обработку персональных данных
+                      </a>
                     </label>
                   </div>
 
+                  {/* Кнопка отправки */}
                   <button
                     type="submit"
                     disabled={isPending || !consentAgreed}
-                    className="w-full px-8 py-5 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white text-lg rounded-xl font-bold hover:shadow-[0_0_40px_rgba(236,72,153,0.6)] transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-500/30"
+                    className="w-full px-6 py-4 bg-slate-800 text-white rounded-xl font-medium hover:bg-slate-700 transition-colors duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-800"
                   >
-                    <TbSend className="w-6 h-6" />
+                    <TbSend className="w-5 h-5" />
                     {isPending ? "Отправка..." : "Отправить заявку"}
                   </button>
+
+                  <p className="text-xs text-center text-slate-400">
+                    Поля, отмеченные *, обязательны для заполнения
+                  </p>
                 </form>
               )}
             </div>

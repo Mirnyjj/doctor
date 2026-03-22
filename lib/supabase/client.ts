@@ -1,7 +1,8 @@
 "use client";
 
+import { Database } from "@/supabase/database.types";
 import { createBrowserClient } from "@supabase/ssr";
-import type { Database } from "./database.types";
+
 
 let supabaseClient: ReturnType<typeof createBrowserClient<Database>> | null =
   null;

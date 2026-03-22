@@ -13,25 +13,33 @@ type PostSectionProps = {
 
 export function PostSection({ section }: PostSectionProps) {
   return (
-    <Card>
+    <Card className="border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden bg-white">
+      {section.image && (
+        <div className="relative h-64 md:h-80 w-full overflow-hidden">
+          <Image
+            src={section.image}
+            alt={section.title}
+            fill
+            className="object-cover transition-transform duration-700 hover:scale-105"
+            loading="lazy"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+        </div>
+      )}
+
       <CardHeader>
-        <CardTitle className="text-[1.35rem]">{section.title}</CardTitle>
+        <CardTitle className="text-2xl md:text-3xl font-light text-slate-800">
+          {section.title}
+        </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <p className="m-0 leading-7 text-slate-700">{section.text}</p>
-        {section.image ? (
-          <div className="overflow-hidden rounded-xl">
-            <Image
-              src={section.image}
-              alt={section.title}
-              width={1100}
-              height={620}
-              className="h-auto w-full object-cover"
-              loading="lazy"
-              sizes="(max-width: 768px) 100vw, 75vw"
-            />
-          </div>
-        ) : null}
+
+      <CardContent>
+        <div className="prose prose-slate max-w-none">
+          <p className="text-lg text-slate-600 leading-relaxed">
+            {section.text}
+          </p>
+        </div>
       </CardContent>
     </Card>
   );

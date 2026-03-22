@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { getGlobalMeta, getSiteSettings } from "@/lib/db";
+import { getDoctorById } from "@/lib/db";
 import { CookieConsent } from "@/components/CookieConsent";
-import { mapMetaToMetadata } from "@/lib/metadata";
-import type { Json } from "@/lib/supabase/database.types";
+import { Footer } from "@/components/Footer";
+import { Header } from "@/components/Header";
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -15,31 +15,48 @@ const inter = Inter({
 
 const defaultJsonLd = {
   "@context": "https://schema.org",
-  "@type": "MedicalClinic",
-  name: "Неврологическая клиника Доктора Авдеевой",
-  description:
-    "Диагностика и лечение неврологических заболеваний: мигрени, боли в спине, нарушения сна и реабилитация.",
+  "@type": "MedicalOrganization",
+  name: "Врач невролог в Самаре",
+  description: "Диагностика и лечение неврологических заболеваний",
   url: process.env.NEXT_PUBLIC_APP_URL,
-  telephone: "+79276136513",
+  telephone: "+79374591633",
   medicalSpecialty: "Neurologic",
 };
 
-const asJsonLd = (value: Json | null) => {
-  if (!value || typeof value !== "object") {
-    return defaultJsonLd;
-  }
-
-  return value;
-};
-
 export async function generateMetadata(): Promise<Metadata> {
-  const meta = await getGlobalMeta();
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
   return {
-    metadataBase: new URL(
-      process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-    ),
-    ...mapMetaToMetadata(meta, "Неврологическая клиника Доктора Авдеевой"),
+    metadataBase: new URL(baseUrl),
+
+    title: {
+      default: "Врач невролог — лечение и диагностика",
+      template: "%s | Врач невролог",
+    },
+
+    description:
+      "Диагностика и лечение неврологических заболеваний: мигрени, боли в спине, нарушения сна.",
+
+    openGraph: {
+      type: "website",
+      url: baseUrl,
+      siteName: "Врач невролог",
+      title: "Врач невролог — лечение и диагностика",
+      description: "Диагностика и лечение неврологических заболеваний.",
+      images: [
+        {
+          url: `${baseUrl}/android-chrome-192x192.png`,
+          width: 192,
+          height: 192,
+          alt: "Врач невролог",
+        },
+      ],
+    },
+
+    robots: {
+      index: true,
+      follow: true,
+    },
   };
 }
 
@@ -48,16 +65,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [settings, globalMeta] = await Promise.all([
-    getSiteSettings().catch((error) => {
-      console.error("Error loading site settings:", error);
-      return null;
-    }),
-    getGlobalMeta().catch((error) => {
-      console.error("Error loading global meta:", error);
-      return null;
-    }),
-  ]);
+  const doctor = await getDoctorById(1).catch(() => null);
 
   return (
     <html lang="ru">
@@ -65,7 +73,7 @@ export default async function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(asJsonLd(globalMeta?.json_ld ?? null)),
+            __html: JSON.stringify(defaultJsonLd),
           }}
         />
 
@@ -107,9 +115,6 @@ export default async function RootLayout({
         <div
           className="fixed inset-0 z-[-2] bg-no-repeat"
           style={{
-            backgroundImage: settings?.background_gif_url
-              ? `url(${settings.background_gif_url})`
-              : "none",
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
@@ -121,7 +126,10 @@ export default async function RootLayout({
         <div className="fixed inset-0 z-[-1] bg-white/85" />
 
         <div className="relative z-0 min-h-screen">
-          <ErrorBoundary>{children}</ErrorBoundary>
+          <ErrorBoundary>
+            <Header doctor={doctor} />
+            {children} <Footer doctor={doctor} />
+          </ErrorBoundary>
           <CookieConsent />
         </div>
       </body>
