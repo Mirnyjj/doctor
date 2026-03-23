@@ -12,7 +12,6 @@ export async function updateDoctor(prevState: any, formData: FormData) {
     name: formData.get("name") as string,
     experience: formData.get("experience") as string,
     reviews_count: parseInt(formData.get("reviews_count") as string) || 0,
-    price: formData.get("price") as string,
     phone: formData.get("phone") as string,
     is_active: formData.get("is_active") === "on",
   };
