@@ -9,9 +9,11 @@ import {
   TbMail,
   TbClock,
   TbVideo,
+  TbCalendarPlus,
 } from "react-icons/tb";
 import { FiCheckCircle } from "react-icons/fi";
 import type { DoctorWithRelations, Problem } from "@/lib/types";
+import Link from "next/link";
 
 interface ContactFormProps {
   problem: Problem[];
@@ -157,7 +159,7 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
 
               <div className="space-y-4">
                 {/* Телефон */}
-                <a
+                <Link
                   href={`tel:${doctor.phone}`}
                   className="flex items-center gap-4 p-5 bg-white rounded-xl border border-slate-100 hover:border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 group"
                 >
@@ -170,7 +172,7 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
                       {doctor.phone}
                     </div>
                   </div>
-                </a>
+                </Link>
 
                 {email && email[0] && (
                   <a
@@ -188,7 +190,24 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
                     </div>
                   </a>
                 )}
-
+                <Link
+                  href="https://prodoctorov.ru/samara/vrach/1240037-ponyatova"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-4 p-5 bg-white rounded-xl border border-slate-100 hover:border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 group"
+                >
+                  <div className="w-12 h-12 bg-violet-50 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <TbCalendarPlus className="w-6 h-6 text-violet-600" />
+                  </div>
+                  <div>
+                    <div className="text-sm text-slate-400 mb-1">
+                      ПроДокторов
+                    </div>
+                    <div className="text-lg font-medium text-slate-800">
+                      Записаться на очный приём
+                    </div>
+                  </div>
+                </Link>
                 {/* Время работы */}
                 {doctor.schedule && doctor.schedule.length > 0 && (
                   <div className="flex items-start gap-4 p-5 bg-white rounded-xl border border-slate-100">
@@ -437,15 +456,27 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
                       htmlFor="consent"
                       className="text-sm text-slate-500 leading-relaxed"
                     >
-                      Я согласен(на) на{" "}
-                      <a
+                      Я даю{" "}
+                      <strong>согласие на обработку персональных данных</strong>{" "}
+                      в соответствии с{" "}
+                      <Link
                         href="/privacy"
                         target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-700 underline underline-offset-2 transition-colors"
+                        className="text-blue-600 underline"
                       >
-                        обработку персональных данных
-                      </a>
+                        Политикой в отношении обработки персональных данных
+                      </Link>
+                      , включая сбор, хранение и использование моих данных для
+                      оказания консультации и обратной связи. Я подтверждаю, что
+                      ознакомлен(а) с условиями{" "}
+                      <Link
+                        href="/offer"
+                        target="_blank"
+                        className="text-blue-600 underline"
+                      >
+                        Договора-оферты
+                      </Link>
+                      .
                     </label>
                   </div>
 
