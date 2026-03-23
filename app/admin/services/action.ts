@@ -1,5 +1,6 @@
+"use server";
 import { checkAdmin } from "@/lib/actions";
-import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 export async function createService(prev: any, formData: FormData) {
   const supabase = await checkAdmin();
@@ -13,7 +14,8 @@ export async function createService(prev: any, formData: FormData) {
 
   if (error) return { error: error.message };
 
-  redirect("/admin/content");
+  revalidatePath("/admin/services");
+  return { success: true };
 }
 
 export async function updateServices(prev: any, formData: FormData) {
@@ -49,7 +51,8 @@ export async function updateServices(prev: any, formData: FormData) {
     if (error) return { error: error.message };
   }
 
-  redirect("/admin/content");
+  revalidatePath("/admin/services");
+  return { success: true };
 }
 
 export async function deleteService(id: string) {
@@ -59,5 +62,6 @@ export async function deleteService(id: string) {
 
   if (error) return { error: error.message };
 
-  redirect("/admin/content");
+  revalidatePath("/admin/services");
+  return { success: true };
 }

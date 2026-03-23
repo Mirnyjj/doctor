@@ -1,6 +1,10 @@
+"use server";
 import { checkAdmin } from "@/lib/actions";
-import { BUCKET, getStoragePath, uploadImage } from "../content/action";
+import { uploadImage } from "../content/action";
 import { redirect } from "next/navigation";
+import { BUCKET } from "@/lib/constants";
+import { revalidatePath } from "next/cache";
+import { getStoragePath } from "@/lib/utils";
 
 export async function createPost(prev: any, formData: FormData) {
   const supabase = await checkAdmin();
@@ -21,7 +25,8 @@ export async function createPost(prev: any, formData: FormData) {
 
   if (error) return { error: error.message };
 
-  redirect("/admin/content");
+  revalidatePath("/admin/posts");
+  return { success: true };
 }
 
 export async function updatePosts(prev: any, formData: FormData) {
@@ -94,7 +99,7 @@ export async function updatePosts(prev: any, formData: FormData) {
     if (error) return { error: error.message };
   }
 
-  redirect("/admin/content");
+  revalidatePath("/admin/posts");
   return { success: true };
 }
 
@@ -152,7 +157,8 @@ export async function createSection(prev: any, formData: FormData) {
 
   if (error) return { error: error.message };
 
-  redirect("/admin/content");
+  revalidatePath("/admin/posts");
+  return { success: true };
 }
 
 export async function updateSections(prev: any, formData: FormData) {
@@ -219,9 +225,10 @@ export async function updateSections(prev: any, formData: FormData) {
       .eq("id", s.id);
 
     if (error) return { error: error.message };
+    const path = `/admin/posts?tab=sections&post_id=${s.id}`;
+    revalidatePath(path);
+    return { success: true };
   }
-
-  redirect("/admin/content");
 }
 
 export async function deleteSection(id: string) {
@@ -242,5 +249,5 @@ export async function deleteSection(id: string) {
 
   await supabase.from("post_sections").delete().eq("id", id);
 
-  redirect("/admin/content");
+  revalidatePath("/admin/posts");
 }

@@ -42,9 +42,9 @@ export default function DoctorContacts({
           </div>
         </AdminForm>
       </div>
-      <AdminForm action={upsertDoctorContacts}>
-        {contacts.map((c, i) => (
-          <div key={c.id} className="border p-4 rounded space-y-2">
+      {contacts.map((c, i) => (
+        <AdminForm action={upsertDoctorContacts} key={c.id}>
+          <div className="border p-4 rounded space-y-2">
             <AdminHidden name={`contacts[${i}][id]`} value={c.id} />
 
             <AdminSelect
@@ -68,8 +68,8 @@ export default function DoctorContacts({
 
             <AdminDeleteButton action={deleteDoctorContact} id={c.id} />
           </div>
-        ))}
-      </AdminForm>
+        </AdminForm>
+      ))}
     </div>
   );
 }

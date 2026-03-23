@@ -53,12 +53,9 @@ export default function DoctorEducationTab({
       </div>
 
       {/* LIST */}
-      <AdminForm action={upsertDoctorEducation}>
-        {education.map((e, i) => (
-          <div
-            key={e.id}
-            className="border p-4 rounded space-y-2 w-full min-w-0"
-          >
+      {education.map((e, i) => (
+        <AdminForm action={upsertDoctorEducation} key={e.id}>
+          <div className="border p-4 rounded space-y-2 w-full min-w-0">
             <AdminHidden name={`education[${i}][id]`} value={e.id} />
 
             <AdminInput
@@ -88,8 +85,8 @@ export default function DoctorEducationTab({
 
             <AdminDeleteButton action={deleteDoctorEducation} id={e.id} />
           </div>
-        ))}
-      </AdminForm>
+        </AdminForm>
+      ))}
     </div>
   );
 }

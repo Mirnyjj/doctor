@@ -21,9 +21,9 @@ export default function ProblemTab({ problems }: { problems: Problem[] }) {
         </AdminForm>
       </div>
 
-      <AdminForm action={upsertProblems}>
-        {problems.map((p, i) => (
-          <div key={p.id} className="border p-4 rounded space-y-2">
+      {problems.map((p, i) => (
+        <AdminForm action={upsertProblems} key={p.id}>
+          <div className="border p-4 rounded space-y-2">
             <AdminHidden name={`problems[${i}][id]`} value={p.id.toString()} />
 
             <AdminInput name={`problems[${i}][title]`} defaultValue={p.title} />
@@ -35,8 +35,8 @@ export default function ProblemTab({ problems }: { problems: Problem[] }) {
 
             <AdminDeleteButton action={deleteProblem} id={p.id.toString()} />
           </div>
-        ))}
-      </AdminForm>
+        </AdminForm>
+      ))}
     </div>
   );
 }

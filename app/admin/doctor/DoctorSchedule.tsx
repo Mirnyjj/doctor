@@ -27,7 +27,7 @@ export default function DoctorScheduleTab({
   schedule: DoctorSchedule[];
 }) {
   return (
-    <div className="overflow-x-hidden">
+    <div className="overflow-x-hidden flex flex-col gap-2">
       {/* ADD */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4 min-w-0">

@@ -16,7 +16,7 @@ export default function DoctorAddresses({
   addresses: DoctorAddress[];
 }) {
   return (
-    <div className="overflow-x-hidden">
+    <div className="overflow-x-hidden flex flex-col gap-2">
       {/* ADD */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4 min-w-0">
@@ -35,12 +35,9 @@ export default function DoctorAddresses({
       </div>
 
       {/* LIST */}
-      <AdminForm action={upsertDoctorAddresses}>
-        {addresses.map((a, i) => (
-          <div
-            key={a.id}
-            className="border p-4 rounded space-y-2 w-full min-w-0"
-          >
+      {addresses.map((a, i) => (
+        <AdminForm action={upsertDoctorAddresses} key={a.id}>
+          <div className="border p-4 rounded space-y-2 w-full min-w-0">
             <AdminHidden name={`addresses[${i}][id]`} value={a.id} />
 
             <AdminInput
@@ -63,8 +60,8 @@ export default function DoctorAddresses({
 
             <AdminDeleteButton action={deleteDoctorAddress} id={a.id} />
           </div>
-        ))}
-      </AdminForm>
+        </AdminForm>
+      ))}
     </div>
   );
 }

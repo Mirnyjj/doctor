@@ -1,5 +1,6 @@
+"use server";
 import { checkAdmin } from "@/lib/actions";
-import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 export async function createReviews(prev: any, formData: FormData) {
   const supabase = await checkAdmin();
@@ -13,7 +14,8 @@ export async function createReviews(prev: any, formData: FormData) {
 
   if (error) return { error: error.message };
 
-  redirect("/admin/content");
+  revalidatePath("/admin/reviews");
+  return { success: true };
 }
 
 export async function updateReviews(prev: any, formData: FormData) {
@@ -48,7 +50,8 @@ export async function updateReviews(prev: any, formData: FormData) {
     if (error) return { error: error.message };
   }
 
-  redirect("/admin/content");
+  revalidatePath("/admin/reviews");
+  return { success: true };
 }
 
 export async function deleteReview(id: string) {
@@ -58,5 +61,6 @@ export async function deleteReview(id: string) {
 
   if (error) return { error: error.message };
 
-  redirect("/admin/content");
+  revalidatePath("/admin/reviews");
+  return { success: true };
 }

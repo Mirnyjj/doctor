@@ -1,6 +1,6 @@
 "use server";
 import { checkAdmin } from "@/lib/actions";
-import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 export async function updateDoctor(prevState: any, formData: FormData) {
   const supabase = await checkAdmin();
@@ -38,9 +38,11 @@ export async function updateDoctor(prevState: any, formData: FormData) {
     .update(doctor as never)
     .eq("id", existing.id);
 
-  if (error) throw new Error(error.message);
-
-  redirect("/admin/doctor");
+  if (error) {
+    return { error: error.message };
+  }
+  revalidatePath("/admin/doctor");
+  return { success: true };
 }
 
 type ContactFormValue = {
@@ -106,7 +108,7 @@ export async function upsertDoctorContacts(prevState: any, formData: FormData) {
     }
   }
 
-  redirect("/admin/doctor");
+  revalidatePath("/admin/doctor?tab=contacts");
 
   return { success: true };
 }
@@ -121,7 +123,7 @@ export async function deleteDoctorContact(id: string) {
 
   if (error) return { error: error.message };
 
-  redirect("/admin/doctor");
+  revalidatePath("/admin/doctor?tab=contacts");
 
   return { success: true };
 }
@@ -164,7 +166,7 @@ export async function addDoctorContact(prevState: any, formData: FormData) {
 
   if (error) return { error: error.message };
 
-  redirect("/admin/doctor");
+  revalidatePath("/admin/doctor?tab=contacts");
 
   return { success: true };
 }
@@ -208,7 +210,7 @@ export async function addDoctorAddress(prevState: any, formData: FormData) {
 
   if (error) return { error: error.message };
 
-  redirect("/admin/doctor");
+  revalidatePath("/admin/doctor?tab=addresses");
 
   return { success: true };
 }
@@ -262,7 +264,7 @@ export async function upsertDoctorAddresses(
     }
   }
 
-  redirect("/admin/doctor");
+  revalidatePath("/admin/doctor?tab=addresses");
 
   return { success: true };
 }
@@ -277,7 +279,7 @@ export async function deleteDoctorAddress(id: string) {
 
   if (error) return { error: error.message };
 
-  redirect("/admin/doctor");
+  revalidatePath("/admin/doctor?tab=addresses");
 
   return { success: true };
 }
@@ -317,7 +319,7 @@ export async function addDoctorSchedule(prevState: any, formData: FormData) {
 
   if (error) return { error: error.message };
 
-  redirect("/admin/doctor");
+  revalidatePath("/admin/doctor?tab=schedule");
 
   return { success: true };
 }
@@ -371,7 +373,7 @@ export async function upsertDoctorSchedules(
     }
   }
 
-  redirect("/admin/doctor");
+  revalidatePath("/admin/doctor?tab=schedule");
 
   return { success: true };
 }
@@ -386,7 +388,7 @@ export async function deleteDoctorSchedule(id: string) {
 
   if (error) return { error: error.message };
 
-  redirect("/admin/doctor");
+  revalidatePath("/admin/doctor?tab=schedule");
 
   return { success: true };
 }
@@ -432,7 +434,7 @@ export async function addDoctorEducation(prevState: any, formData: FormData) {
 
   if (error) return { error: error.message };
 
-  redirect("/admin/doctor");
+  revalidatePath("/admin/doctor?tab=education");
 
   return { success: true };
 }
@@ -488,7 +490,7 @@ export async function upsertDoctorEducation(
     }
   }
 
-  redirect("/admin/doctor");
+  revalidatePath("/admin/doctor?tab=education");
 
   return { success: true };
 }
@@ -503,7 +505,7 @@ export async function deleteDoctorEducation(id: string) {
 
   if (error) return { error: error.message };
 
-  redirect("/admin/doctor");
+  revalidatePath("/admin/doctor?tab=education");
 
   return { success: true };
 }

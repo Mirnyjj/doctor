@@ -1,12 +1,8 @@
+"use server";
 import { checkAdmin } from "@/lib/actions";
-import { redirect } from "next/navigation";
-
-export const BUCKET = "image";
-
-export function getStoragePath(url: string) {
-  const parts = url.split(`storage/v1/object/public/${BUCKET}/`);
-  return parts[1] || null;
-}
+import { BUCKET } from "@/lib/constants";
+import { getStoragePath } from "@/lib/utils";
+import { revalidatePath } from "next/cache";
 
 export async function uploadImage(file: File) {
   const supabase = await checkAdmin();
@@ -67,8 +63,8 @@ export async function updateBanner(prevState: any, formData: FormData) {
     .eq("id", id);
 
   if (error) return { error: error.message };
-
-  redirect("/admin/content");
+  revalidatePath("/admin/content");
+  return { success: true };
 }
 
 export async function deleteBanner(id: string) {
@@ -92,8 +88,8 @@ export async function deleteBanner(id: string) {
   const { error } = await supabase.from("banners").delete().eq("id", id);
 
   if (error) return { error: error.message };
-
-  redirect("/admin/content");
+  revalidatePath("/admin/content");
+  return { success: true };
 }
 
 export async function createBanner(prevState: any, formData: FormData) {
@@ -128,11 +124,10 @@ export async function createBanner(prevState: any, formData: FormData) {
   if (error) {
     await supabase.storage.from(BUCKET).remove([fileName]);
     return { error: error.message };
+  } else {
+    revalidatePath("/admin/content");
+    return { success: true };
   }
-
-  redirect("/admin/content");
-
-  return { success: true };
 }
 
 export async function addProblem(prevState: any, formData: FormData) {
@@ -149,8 +144,7 @@ export async function addProblem(prevState: any, formData: FormData) {
   });
 
   if (error) return { error: error.message };
-
-  redirect("/admin/content");
+  revalidatePath("/admin/content?tab=problems");
   return { success: true };
 }
 
@@ -185,8 +179,7 @@ export async function upsertProblems(prevState: any, formData: FormData) {
       if (error) return { error: error.message };
     }
   }
-
-  redirect("/admin/content");
+  revalidatePath("/admin/content?tab=problems");
   return { success: true };
 }
 
@@ -197,7 +190,7 @@ export async function deleteProblem(id: string) {
 
   if (error) return { error: error.message };
 
-  redirect("/admin/content");
+  revalidatePath("/admin/content?tab=problems");
   return { success: true };
 }
 
@@ -218,8 +211,7 @@ export async function addStage(prevState: any, formData: FormData) {
   const { error } = await supabase.from("treatment_stages").insert(stage);
 
   if (error) return { error: error.message };
-
-  redirect("/admin/content");
+  revalidatePath("/admin/content?tab=stages");
   return { success: true };
 }
 
@@ -257,8 +249,7 @@ export async function upsertStages(prevState: any, formData: FormData) {
       if (error) return { error: error.message };
     }
   }
-
-  redirect("/admin/content");
+  revalidatePath("/admin/content?tab=stages");
   return { success: true };
 }
 
@@ -271,7 +262,6 @@ export async function deleteStage(id: string) {
     .eq("id", id);
 
   if (error) return { error: error.message };
-
-  redirect("/admin/content");
+  revalidatePath("/admin/content?tab=stages");
   return { success: true };
 }

@@ -24,9 +24,9 @@ export default function StagesTab({ stages }: { stages: TreatmentStage[] }) {
         </AdminForm>
       </div>
 
-      <AdminForm action={upsertStages}>
-        {stages.map((s, i) => (
-          <div key={s.id} className="border p-4 rounded space-y-2">
+      {stages.map((s, i) => (
+        <AdminForm action={upsertStages} key={s.id}>
+          <div className="border p-4 rounded space-y-2">
             <AdminHidden name={`stages[${i}][id]`} value={s.id.toString()} />
 
             <AdminInput name={`stages[${i}][title]`} defaultValue={s.title} />
@@ -53,8 +53,8 @@ export default function StagesTab({ stages }: { stages: TreatmentStage[] }) {
 
             <AdminDeleteButton action={deleteStage} id={s.id.toString()} />
           </div>
-        ))}
-      </AdminForm>
+        </AdminForm>
+      ))}
     </div>
   );
 }
