@@ -11,7 +11,6 @@ export async function updateDoctor(prevState: any, formData: FormData) {
   const doctor = {
     name: formData.get("name") as string,
     experience: formData.get("experience") as string,
-    reviews_count: parseInt(formData.get("reviews_count") as string) || 0,
     phone: formData.get("phone") as string,
     is_active: formData.get("is_active") === "on",
   };
