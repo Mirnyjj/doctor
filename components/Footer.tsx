@@ -128,6 +128,13 @@ export function Footer({ doctor }: FooterProps) {
             <div className="flex gap-6 text-xs">
               <Link
                 href="/privacy"
+                target="_blank"
+                className="text-white/30 hover:text-white/50 transition-colors"
+              >
+                Политикой в отношении обработки персональных данных
+              </Link>
+              <Link
+                href="/privacy"
                 className="text-white/30 hover:text-white/50 transition-colors"
               >
                 Политика конфиденциальности

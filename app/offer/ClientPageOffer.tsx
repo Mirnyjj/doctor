@@ -1,6 +1,5 @@
 "use client";
 
-import { DoctorContact } from "@/lib/types";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { LuArrowBigLeft } from "react-icons/lu";
@@ -164,7 +163,7 @@ export default function ClientPageOffer({
                 2.1. Заказчик поручает и обязуется оплатить, а Исполнитель
                 принимает на себя обязательства оказать
                 информационно-консультационные услуги согласно выбранного пакета
-                услуг на сайте https://taplink.cc/dr.shutkova Перечень, сроки и
+                услуг на сайте {url || "https://&&&&&&"} Перечень, сроки и
                 стоимость услуг, оказываемых Исполнителем по настоящему
                 Договору, а также Требования к оказываемым услугам,
                 устанавливаются на сайте Исполнителя {url || "https://&&&&&&"} в
