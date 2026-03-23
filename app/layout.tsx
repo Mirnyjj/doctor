@@ -53,6 +53,14 @@ export async function generateMetadata(): Promise<Metadata> {
       ],
     },
 
+    twitter: {
+      card: "summary_large_image",
+      title: "Врач невролог — лечение и диагностика",
+      description:
+        "Диагностика и лечение неврологических заболеваний: мигрени, боли в спине, нарушения сна.",
+      images: [`${baseUrl}/android-chrome-192x192.png`],
+    },
+
     robots: {
       index: true,
       follow: true,

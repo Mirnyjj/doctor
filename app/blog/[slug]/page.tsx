@@ -56,11 +56,20 @@ export async function generateMetadata({
       type: "article",
       images: [
         {
-          url: data.post.banner_image,
-          width: 1200,
-          height: 630,
+          // Use site default image for messenger previews (android-chrome-192x192.png)
+          url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/android-chrome-192x192.png`,
+          width: 192,
+          height: 192,
           alt: data.post.title,
         },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: data.post.title,
+      description: data.post.excerpt || data.post.title,
+      images: [
+        `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/android-chrome-192x192.png`,
       ],
     },
   };

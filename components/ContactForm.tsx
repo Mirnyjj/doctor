@@ -12,11 +12,10 @@ import {
 } from "react-icons/tb";
 import { FiCheckCircle } from "react-icons/fi";
 import type { DoctorWithRelations, Problem } from "@/lib/types";
-import { sendAppointmentMessage } from "@/telegram";
 
 interface ContactFormProps {
   problem: Problem[];
-  doctor: DoctorWithRelations
+  doctor: DoctorWithRelations;
 }
 
 export function ContactForm({ problem, doctor }: ContactFormProps) {
@@ -26,7 +25,7 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
   } | null>(null);
   const [isPending, startTransition] = useTransition();
   const [consentAgreed, setConsentAgreed] = useState(false);
-  const email = doctor.contacts?.filter(item => item.type === 'email')
+  const email = doctor.contacts?.filter((item) => item.type === "email");
 
   const handleSubmit = async (formData: FormData) => {
     startTransition(async () => {
@@ -39,11 +38,21 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
           service: formData.get("service") as string,
           date: formData.get("date") as string,
           message: formData.get("message") as string,
-          online: formData.get("onlineConsultation") as string,
+          online: !!formData.get("onlineConsultation"),
           source: "Форма записи на приём",
         };
 
-        await sendAppointmentMessage(data);
+        // Отправляем на почту через серверный роут
+        const resp = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => ({}));
+          throw new Error(err?.error || "Email send failed");
+        }
 
         setResult({
           success: true,
@@ -54,7 +63,7 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
         setTimeout(() => {
           setResult(null);
           const form = document.getElementById(
-            "contact-form"
+            "contact-form",
           ) as HTMLFormElement;
           if (form) form.reset();
           setConsentAgreed(false);
@@ -70,33 +79,51 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
     });
   };
 
-  const daysOfWeek = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-  const fullDaysOfWeek = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+  const daysOfWeek = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+  const fullDaysOfWeek = [
+    "Понедельник",
+    "Вторник",
+    "Среда",
+    "Четверг",
+    "Пятница",
+    "Суббота",
+    "Воскресенье",
+  ];
 
   // Форматируем время
   const formatTime = (time: string | null) => {
-    if (!time) return 'Выходной';
+    if (!time) return "Выходной";
     return time.slice(0, 5); // "09:00:00" -> "09:00"
   };
 
   // Группируем по дням с одинаковым расписанием для компактного отображения
-  const compactSchedule = doctor.schedule?.reduce((acc, day) => {
-    const lastGroup = acc[acc.length - 1];
+  const compactSchedule = doctor.schedule?.reduce(
+    (acc, day) => {
+      const lastGroup = acc[acc.length - 1];
 
-    if (lastGroup && lastGroup.start === day.start_time && lastGroup.end === day.end_time) {
-      lastGroup.days.push(day.day_of_week);
-    } else {
-      acc.push({
-        days: [day.day_of_week],
-        start: day.start_time,
-        end: day.end_time
-      });
-    }
-    return acc;
-  }, [] as { days: number[]; start: string | null; end: string | null }[]);
+      if (
+        lastGroup &&
+        lastGroup.start === day.start_time &&
+        lastGroup.end === day.end_time
+      ) {
+        lastGroup.days.push(day.day_of_week);
+      } else {
+        acc.push({
+          days: [day.day_of_week],
+          start: day.start_time,
+          end: day.end_time,
+        });
+      }
+      return acc;
+    },
+    [] as { days: number[]; start: string | null; end: string | null }[],
+  );
 
   return (
-    <section id="contact" className="py-20 bg-gradient-to-b from-white to-slate-50">
+    <section
+      id="contact"
+      className="py-20 bg-gradient-to-b from-white to-slate-50"
+    >
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -109,7 +136,8 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
             Запись на приём
           </h2>
           <p className="text-lg text-slate-500 max-w-2xl mx-auto">
-            Выберите удобный способ связи или заполните форму, и я свяжусь с вами для уточнения деталей
+            Выберите удобный способ связи или заполните форму, и я свяжусь с
+            вами для уточнения деталей
           </p>
         </motion.div>
 
@@ -138,7 +166,9 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
                   </div>
                   <div>
                     <div className="text-sm text-slate-400 mb-1">Телефон</div>
-                    <div className="text-lg font-medium text-slate-800">{doctor.phone}</div>
+                    <div className="text-lg font-medium text-slate-800">
+                      {doctor.phone}
+                    </div>
                   </div>
                 </a>
 
@@ -152,7 +182,9 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
                     </div>
                     <div>
                       <div className="text-sm text-slate-400 mb-1">Email</div>
-                      <div className="text-lg font-medium text-slate-800">{email[0].value}</div>
+                      <div className="text-lg font-medium text-slate-800">
+                        {email[0].value}
+                      </div>
                     </div>
                   </a>
                 )}
@@ -164,24 +196,33 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
                       <TbClock className="w-6 h-6 text-amber-600" />
                     </div>
                     <div className="flex-1">
-                      <div className="text-sm text-slate-400 mb-2">Время работы</div>
+                      <div className="text-sm text-slate-400 mb-2">
+                        Время работы
+                      </div>
 
                       {/* Компактное отображение */}
                       <div className="space-y-1">
-                        {compactSchedule && compactSchedule.map((group, idx) => {
-                          const dayRange = group.days.length > 1
-                            ? `${daysOfWeek[group.days[0]]}-${daysOfWeek[group.days[group.days.length - 1]]}`
-                            : daysOfWeek[group.days[0]];
+                        {compactSchedule &&
+                          compactSchedule.map((group, idx) => {
+                            const dayRange =
+                              group.days.length > 1
+                                ? `${daysOfWeek[group.days[0]]}-${daysOfWeek[group.days[group.days.length - 1]]}`
+                                : daysOfWeek[group.days[0]];
 
-                          return (
-                            <div key={idx} className="flex justify-between text-sm">
-                              <span className="text-slate-500">{dayRange}</span>
-                              <span className="text-slate-700 font-medium">
-                                {`${formatTime(group.start)} – ${formatTime(group.end)}`}
-                              </span>
-                            </div>
-                          );
-                        })}
+                            return (
+                              <div
+                                key={idx}
+                                className="flex justify-between text-sm"
+                              >
+                                <span className="text-slate-500">
+                                  {dayRange}
+                                </span>
+                                <span className="text-slate-700 font-medium">
+                                  {`${formatTime(group.start)} – ${formatTime(group.end)}`}
+                                </span>
+                              </div>
+                            );
+                          })}
                       </div>
 
                       {/* Детальное отображение (можно добавить по клику) */}
@@ -193,8 +234,13 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
                           {doctor.schedule
                             .sort((a, b) => a.day_of_week - b.day_of_week)
                             .map((day) => (
-                              <div key={day.id} className="flex justify-between text-xs">
-                                <span className="text-slate-400">{fullDaysOfWeek[day.day_of_week]}</span>
+                              <div
+                                key={day.id}
+                                className="flex justify-between text-xs"
+                              >
+                                <span className="text-slate-400">
+                                  {fullDaysOfWeek[day.day_of_week]}
+                                </span>
                                 <span className="text-slate-600">
                                   {`${formatTime(day.start_time)} – ${formatTime(day.end_time)}`}
                                 </span>
@@ -210,10 +256,13 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
 
             {/* Дополнительная информация */}
             <div className="bg-slate-50 rounded-xl p-6 border border-slate-100">
-              <h4 className="font-medium text-slate-800 mb-3">Обратите внимание</h4>
+              <h4 className="font-medium text-slate-800 mb-3">
+                Обратите внимание
+              </h4>
               <p className="text-sm text-slate-500 leading-relaxed">
-                При первичном приёме просьба иметь при себе результаты предыдущих обследований (если есть).
-                Это поможет более точно оценить ситуацию и сократить время диагностики.
+                При первичном приёме просьба иметь при себе результаты
+                предыдущих обследований (если есть). Это поможет более точно
+                оценить ситуацию и сократить время диагностики.
               </p>
             </div>
           </motion.div>
@@ -251,15 +300,16 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
                   {result && !result.success && (
                     <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-3">
                       <TbAlertCircle className="w-5 h-5 text-rose-500 flex-shrink-0 mt-0.5" />
-                      <p className="text-rose-600 text-sm">
-                        {result.message}
-                      </p>
+                      <p className="text-rose-600 text-sm">{result.message}</p>
                     </div>
                   )}
 
                   {/* Имя */}
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1.5">
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-medium text-slate-700 mb-1.5"
+                    >
                       Ваше имя <span className="text-rose-400">*</span>
                     </label>
                     <input
@@ -275,7 +325,10 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
 
                   {/* Телефон */}
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-slate-700 mb-1.5">
+                    <label
+                      htmlFor="phone"
+                      className="block text-sm font-medium text-slate-700 mb-1.5"
+                    >
                       Телефон <span className="text-rose-400">*</span>
                     </label>
                     <input
@@ -291,7 +344,10 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
 
                   {/* Услуга */}
                   <div>
-                    <label htmlFor="service" className="block text-sm font-medium text-slate-700 mb-1.5">
+                    <label
+                      htmlFor="service"
+                      className="block text-sm font-medium text-slate-700 mb-1.5"
+                    >
                       Интересует направление
                     </label>
                     <select
@@ -311,7 +367,10 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
 
                   {/* Дата */}
                   <div>
-                    <label htmlFor="date" className="block text-sm font-medium text-slate-700 mb-1.5">
+                    <label
+                      htmlFor="date"
+                      className="block text-sm font-medium text-slate-700 mb-1.5"
+                    >
                       Предпочтительная дата
                     </label>
                     <input
@@ -328,10 +387,12 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
                       id="onlineConsultation"
                       name="onlineConsultation"
                       disabled={isPending}
-
                       className="w-4 h-4 mt-1 text-blue-600 bg-white border-slate-300 rounded focus:ring-blue-200"
                     />
-                    <label htmlFor="online" className="flex items-start gap-2 text-sm text-slate-600 leading-relaxed cursor-pointer">
+                    <label
+                      htmlFor="onlineConsultation"
+                      className="flex items-start gap-2 text-sm text-slate-600 leading-relaxed cursor-pointer"
+                    >
                       <TbVideo className="w-5 h-5 text-blue-500 flex-shrink-0" />
                       <span>
                         <span className="font-medium">Онлайн консультация</span>
@@ -344,7 +405,10 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
 
                   {/* Комментарий */}
                   <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-slate-700 mb-1.5">
+                    <label
+                      htmlFor="message"
+                      className="block text-sm font-medium text-slate-700 mb-1.5"
+                    >
                       Дополнительная информация
                     </label>
                     <textarea
@@ -369,8 +433,11 @@ export function ContactForm({ problem, doctor }: ContactFormProps) {
                       className="w-4 h-4 mt-1 text-blue-600 bg-white border-slate-300 rounded focus:ring-blue-200"
                       required
                     />
-                    <label htmlFor="consent" className="text-sm text-slate-500 leading-relaxed">
-                      Я согласен(на) на{' '}
+                    <label
+                      htmlFor="consent"
+                      className="text-sm text-slate-500 leading-relaxed"
+                    >
+                      Я согласен(на) на{" "}
                       <a
                         href="/privacy"
                         target="_blank"

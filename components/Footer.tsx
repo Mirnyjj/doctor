@@ -132,6 +132,15 @@ export function Footer({ doctor }: FooterProps) {
               >
                 Политика конфиденциальности
               </Link>
+              <Link
+                href="https://www.mirniydev.ru"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-purple-30 hover:text-purple-20 transition-colors flex items-center gap-2"
+              >
+                <LuGlobe className="w-4 h-4 text-purple-40" />
+                <span>Разработка — MirniyDev</span>
+              </Link>
             </div>
           </div>
         </div>
