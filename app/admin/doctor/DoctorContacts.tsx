@@ -17,7 +17,7 @@ export default function DoctorContacts({
   contacts: DoctorContact[];
 }) {
   return (
-    <div className="overflow-x-hidden">
+    <div className="overflow-x-hidden flex flex-col gap-2">
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           Добавить новый контакт
