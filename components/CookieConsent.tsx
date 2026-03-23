@@ -50,12 +50,13 @@ export function CookieConsent() {
       exit={{ y: 100, opacity: 0 }}
       className="fixed bottom-0 left-0 right-0 z-[9999] p-4 sm:p-6 max-w-4xl mx-auto"
     >
-      <div className="bg-gradient-to-r from-black/90 via-gray-900/90 to-black/90 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl p-6 sm:p-8 md:p-10 flex flex-col md:flex-row gap-4 md:gap-6 items-center">
-        <div className="flex-1 text-white/90 text-sm sm:text-base leading-relaxed max-w-prose">
+      <div className="bg-gradient-to-r from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-xl rounded-2xl border border-slate-700/50 shadow-2xl p-6 sm:p-8 md:p-10 flex flex-col md:flex-row gap-4 md:gap-6 items-center">
+        <div className="flex-1 text-slate-100 text-sm sm:text-base leading-relaxed max-w-prose">
           <p>
-            Мы используем сервис <strong>Яндекс.Метрика</strong> для улучшения
-            работы сайта. Это включает cookies и сбор анонимной статистики о
-            посещениях.
+            Мы используем сервис{" "}
+            <strong className="text-slate-200">Яндекс.Метрика</strong> для
+            улучшения работы сайта. Это включает cookies и сбор анонимной
+            статистики о посещениях.
           </p>
           <p className="mt-2">
             Подробнее в{" "}
@@ -63,7 +64,7 @@ export function CookieConsent() {
               href="/privacy"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-pink-400 hover:text-pink-300 underline font-medium transition-colors"
+              className="text-cyan-400 hover:text-cyan-300 underline font-medium transition-colors"
             >
               Политике конфиденциальности
             </a>
@@ -73,13 +74,14 @@ export function CookieConsent() {
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
           <button
             onClick={declineCookies}
-            className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-sm font-medium rounded-xl backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] flex-1 sm:flex-none"
+            className="px-6 py-3 bg-slate-700/40 hover:bg-slate-600/50 border border-slate-600 text-slate-200 text-sm font-medium rounded-xl backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] flex-1 sm:flex-none"
           >
             Отклонить
           </button>
+
           <button
             onClick={acceptCookies}
-            className="px-8 py-3 bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500 hover:shadow-[0_0_20px_rgba(236,72,153,0.4)] text-white text-sm font-bold rounded-xl transition-all duration-300 hover:scale-[1.02] flex-1 sm:flex-none"
+            className="px-8 py-3 bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] text-white text-sm font-semibold rounded-xl transition-all duration-300 hover:scale-[1.02] flex-1 sm:flex-none"
           >
             Принять cookies
           </button>
